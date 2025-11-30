@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T&M Estimate Calculator - Demo</title>
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        h1 {
+            color: #f1f5f9;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        /* Button Styles */
+        .action-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+        }
+
+        .action-button:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-1px);
+        }
+
+        /* Project Info Card */
+        .project-info-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-info-card label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-info-field {
+            margin-top: 1rem;
+        }
+
+        .project-name-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            border-radius: 8px;
+            color: #f1f5f9;
+            font-size: 1rem;
+        }
+
+        .project-name-input:focus {
+            outline: none;
+            border-color: rgba(59, 130, 246, 0.5);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        /* Schedule Cards */
+        .schedule-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            background: rgba(30, 41, 59, 0.4);
+            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+        }
+
+        .schedule-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .schedule-id {
+            color: #3b82f6;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.25rem 0.75rem;
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 12px;
+        }
+
+        .schedule-title h3 {
+            color: #f1f5f9;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .schedule-total {
+            color: #3b82f6;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .schedule-body {
+            padding: 1.5rem;
+        }
+
+        /* Equipment Table */
+        .equipment-catalog-table {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(15, 23, 42, 0.4);
+        }
+
+        .equipment-table-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 0.8fr 0.8fr 1fr 80px;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(30, 41, 59, 0.6);
+            border-bottom: 1px solid rgba(71, 85, 105, 0.4);
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        .equipment-table-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 0.8fr 0.8fr 1fr 80px;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.2);
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .equipment-table-row:hover {
+            background: rgba(30, 41, 59, 0.3);
+        }
+
+        .equipment-table-row.selected {
+            background: rgba(59, 130, 246, 0.08);
+            border-left: 3px solid #3b82f6;
+            cursor: default;
+        }
+
+        .equipment-table-name {
+            color: #f1f5f9;
+            font-size: 0.9375rem;
+            font-weight: 500;
+        }
+
+        .equipment-table-category {
+            color: #64748b;
+            font-size: 0.8125rem;
+        }
+
+        .equipment-table-rate {
+            color: #3b82f6;
+            font-size: 0.9375rem;
+            font-weight: 600;
+        }
+
+        .equipment-table-input input {
+            width: 100%;
+            padding: 0.5rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            border-radius: 6px;
+            color: #f1f5f9;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        .equipment-table-input input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .equipment-table-total {
+            color: #10b981;
+            font-size: 0.9375rem;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .equipment-table-empty {
+            color: #475569;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .remove-button-small {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-button-small:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Consumables Section */
+        .consumables-percentage-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 8px;
+        }
+
+        .percentage-select {
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            border-radius: 8px;
+            color: #f1f5f9;
+            font-size: 1rem;
+        }
+
+        .consumables-calculation {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            border-radius: 8px;
+        }
+
+        .calculation-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .calculation-value {
+            color: #3b82f6;
+            font-weight: 700;
+        }
+
+        /* Miscellaneous Items */
+        .misc-items-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .misc-item-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(71, 85, 105, 0.4);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .misc-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+        }
+
+        .misc-item-name {
+            color: #f1f5f9;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .misc-item-total {
+            color: #10b981;
+            font-size: 1.125rem;
+            font-weight: 700;
+        }
+
+        .misc-item-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .misc-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .misc-field label {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .misc-field input {
+            padding: 0.625rem 0.875rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            border-radius: 6px;
+            color: #f1f5f9;
+            font-size: 0.875rem;
+            text-align: right;
+        }
+
+        .misc-field input:focus {
+            outline: none;
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        /* Line Items for Schedule D */
+        .line-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .line-item {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(71, 85, 105, 0.4);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .line-item-row {
+            display: grid;
+            grid-template-columns: 2fr 0.8fr 1fr 0.8fr 1fr auto;
+            gap: 0.75rem;
+            align-items: start;
+        }
+
+        .description-input {
+            padding: 0.625rem 0.875rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            border-radius: 6px;
+            color: #f1f5f9;
+            font-size: 0.875rem;
+        }
+
+        .input-with-label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .field-label {
+            color: #94a3b8;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .line-item-row input {
+            padding: 0.625rem 0.875rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            border-radius: 6px;
+            color: #f1f5f9;
+            font-size: 0.875rem;
+        }
+
+        .line-total {
+            color: #3b82f6;
+            font-size: 0.9375rem;
+            font-weight: 700;
+            text-align: right;
+            padding-top: 1.4rem;
+        }
+
+        .remove-button {
+            width: 32px;
+            height: 32px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 6px;
+            color: #ef4444;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-top: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-line-button {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px dashed rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: #3b82f6;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .add-line-button:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-style: solid;
+        }
+
+        /* Grand Total */
+        .grand-total-display {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.15) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .total-label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .total-amount {
+            color: #3b82f6;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .no-items-message {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.875rem;
+            padding: 2rem;
+            background: rgba(30, 41, 59, 0.3);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="page-header">
+            <div>
+                <h1>T&M Estimate Calculator</h1>
+                <p>Create detailed Time & Materials estimates with five cost schedules</p>
+            </div>
+            <button onclick="downloadPDF()" class="action-button">Download PDF</button>
+        </div>
+
+        <div id="app"></div>
+    </div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Mock Data
+        const mockEquipmentCatalog = [
+            { id: 1, equipment_name: 'Excavator - Small', category: 'Heavy Equipment', daily_rate: 450.00, is_active: true },
+            { id: 2, equipment_name: 'Excavator - Large', category: 'Heavy Equipment', daily_rate: 850.00, is_active: true },
+            { id: 3, equipment_name: 'Bobcat/Skid Steer', category: 'Heavy Equipment', daily_rate: 350.00, is_active: true },
+            { id: 4, equipment_name: 'Dump Truck', category: 'Vehicles', daily_rate: 400.00, is_active: true },
+            { id: 5, equipment_name: 'Concrete Mixer', category: 'Equipment', daily_rate: 200.00, is_active: true },
+            { id: 6, equipment_name: 'Scaffolding Set', category: 'Equipment', daily_rate: 75.00, is_active: true },
+        ];
+
+        const mockLaborPricing = [
+            { id: 1, labor_type: 'Project Manager', category: 'Management', hourly_rate: 95.00, is_active: true },
+            { id: 2, labor_type: 'Foreman', category: 'Management', hourly_rate: 75.00, is_active: true },
+            { id: 3, labor_type: 'Electrician', category: 'Skilled Labor', hourly_rate: 65.00, is_active: true },
+            { id: 4, labor_type: 'Plumber', category: 'Skilled Labor', hourly_rate: 65.00, is_active: true },
+            { id: 5, labor_type: 'Carpenter', category: 'Skilled Labor', hourly_rate: 55.00, is_active: true },
+            { id: 6, labor_type: 'General Laborer', category: 'General Labor', hourly_rate: 35.00, is_active: true },
+        ];
+
+        const miscellaneousItems = [
+            { id: 'airfare', name: 'Airfare', fields: ['QTY', 'Round Trip Cost'], formula: 'QTY × Round Trip Cost' },
+            { id: 'lodging', name: 'Lodging', fields: ['# Rooms', 'Billing Rate', '# of Days'], formula: '# Rooms × Billing Rate × # of Days' },
+            { id: 'perDiem', name: 'Per Diem', fields: ['# People', 'Daily Rate', '# of Days'], formula: '# People × Daily Rate × # of Days' },
+            { id: 'mobilization', name: 'Mobilization', fields: ['# People', 'Daily Rate', 'Round Trip'], formula: '# People × Daily Rate × Round Trip' },
+            { id: 'fuel', name: 'Fuel', fields: ['# Gallons', 'Gallon Rate', '# of Days'], formula: '# Gallons × Gallon Rate × # of Days' },
+            { id: 'misc', name: 'Misc.', fields: ['QTY', 'Daily Rate', '# of Days'], formula: 'QTY × Daily Rate × # of Days' }
+        ];
+
+        function TMEstimate() {
+            const [projectName, setProjectName] = useState('');
+            const [estimatorName, setEstimatorName] = useState('');
+            const [schedules, setSchedules] = useState({
+                A: [], // Labor
+                B: [], // Consumables
+                C: [], // Equipment
+                D: [], // Subcontractors
+                E: miscellaneousItems.map(item => ({
+                    id: item.id,
+                    itemId: item.id,
+                    description: item.name,
+                    value1: '0',
+                    value2: '0',
+                    value3: '0'
+                }))
+            });
+            const [consumablesPercentage, setConsumablesPercentage] = useState(10);
+
+            const formatCurrency = (amount) => {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(amount);
+            };
+
+            const calculateLineTotal = (scheduleId, item) => {
+                const val1 = parseFloat(item.value1) || 0;
+                const val2 = parseFloat(item.value2) || 0;
+                const val3 = parseFloat(item.value3) || 0;
+
+                if (scheduleId === 'E') {
+                    if (item.itemId === 'airfare') {
+                        return val1 * val2;
+                    } else {
+                        return val1 * val2 * val3;
+                    }
+                }
+
+                if (scheduleId === 'D') {
+                    return val1 * val2 * val3;
+                }
+
+                if (scheduleId === 'C') {
+                    const qty = val1;
+                    const days = val2;
+                    const dailyRate = parseFloat(item.dailyRate) || 0;
+                    return qty * days * dailyRate;
+                }
+
+                if (scheduleId === 'A') {
+                    const qty = parseFloat(item.qty) || 1;
+                    const hoursPerDay = parseFloat(item.hoursPerDay) || 0;
+                    const days = parseFloat(item.days) || 1;
+                    const hourlyRate = parseFloat(item.hourlyRate) || 0;
+
+                    const regularHoursPerDay = Math.min(hoursPerDay, 8);
+                    const regularTotal = qty * regularHoursPerDay * hourlyRate * days;
+
+                    const overtimeHoursPerDay = Math.max(0, hoursPerDay - 8);
+                    const overtimeTotal = qty * overtimeHoursPerDay * hourlyRate * 1.5 * days;
+
+                    return regularTotal + overtimeTotal;
+                }
+
+                return val1 * val2;
+            };
+
+            const calculateScheduleTotal = (scheduleId) => {
+                if (scheduleId === 'B') {
+                    const laborTotal = schedules.A.reduce((sum, item) => {
+                        return sum + calculateLineTotal('A', item);
+                    }, 0);
+                    return (laborTotal * consumablesPercentage) / 100;
+                }
+
+                return schedules[scheduleId].reduce((sum, item) => {
+                    return sum + calculateLineTotal(scheduleId, item);
+                }, 0);
+            };
+
+            const calculateGrandTotal = () => {
+                return Object.keys(schedules).reduce((sum, scheduleId) => {
+                    return sum + calculateScheduleTotal(scheduleId);
+                }, 0);
+            };
+
+            const addLaborFromCatalog = (labor) => {
+                const newItem = {
+                    id: Date.now(),
+                    description: labor.labor_type,
+                    qty: '1',
+                    hoursPerDay: '8',
+                    days: '1',
+                    hourlyRate: labor.hourly_rate,
+                    laborId: labor.id,
+                    category: labor.category
+                };
+
+                setSchedules(prev => ({
+                    ...prev,
+                    A: [...prev.A, newItem]
+                }));
+            };
+
+            const addEquipmentFromCatalog = (equipment) => {
+                const newItem = {
+                    id: Date.now(),
+                    description: equipment.equipment_name,
+                    value1: '1',
+                    value2: '1',
+                    dailyRate: equipment.daily_rate,
+                    equipmentId: equipment.id,
+                    category: equipment.category
+                };
+
+                setSchedules(prev => ({
+                    ...prev,
+                    C: [...prev.C, newItem]
+                }));
+            };
+
+            const updateLineItem = (scheduleId, itemId, field, value) => {
+                setSchedules(prev => ({
+                    ...prev,
+                    [scheduleId]: prev[scheduleId].map(item =>
+                        item.id === itemId ? { ...item, [field]: value } : item
+                    )
+                }));
+            };
+
+            const removeLineItem = (scheduleId, itemId) => {
+                setSchedules(prev => ({
+                    ...prev,
+                    [scheduleId]: prev[scheduleId].filter(item => item.id !== itemId)
+                }));
+            };
+
+            const addLineItem = (scheduleId) => {
+                const newItem = {
+                    id: Date.now(),
+                    description: '',
+                    value1: '',
+                    value2: '',
+                    value3: ''
+                };
+
+                setSchedules(prev => ({
+                    ...prev,
+                    [scheduleId]: [...prev[scheduleId], newItem]
+                }));
+            };
+
+            return (
+                <div>
+                    {/* Project Info */}
+                    <div className="project-info-card">
+                        <label htmlFor="projectName">Project Name</label>
+                        <input
+                            id="projectName"
+                            type="text"
+                            value={projectName}
+                            onChange={(e) => setProjectName(e.target.value)}
+                            placeholder="Enter project name"
+                            className="project-name-input"
+                        />
+                        <div className="project-info-field">
+                            <label htmlFor="estimatorName">Estimator Name</label>
+                            <input
+                                id="estimatorName"
+                                type="text"
+                                value={estimatorName}
+                                onChange={(e) => setEstimatorName(e.target.value)}
+                                placeholder="Enter estimator name"
+                                className="project-name-input"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Schedule A - Labor */}
+                    <div className="schedule-card">
+                        <div className="schedule-header">
+                            <div className="schedule-title">
+                                <span className="schedule-id">Schedule A</span>
+                                <h3>Labor</h3>
+                            </div>
+                            <div className="schedule-total">
+                                {formatCurrency(calculateScheduleTotal('A'))}
+                            </div>
+                        </div>
+                        <div className="schedule-body">
+                            <div className="equipment-catalog-table">
+                                <div className="equipment-table-header">
+                                    <div>Labor Type</div>
+                                    <div>$/Hour</div>
+                                    <div>QTY</div>
+                                    <div>Hrs/Day</div>
+                                    <div>Days</div>
+                                    <div>Total</div>
+                                    <div></div>
+                                </div>
+                                {mockLaborPricing.map((labor) => {
+                                    const selectedItem = schedules.A.find(item => item.laborId === labor.id);
+                                    const isSelected = !!selectedItem;
+
+                                    return (
+                                        <div
+                                            key={labor.id}
+                                            className={`equipment-table-row ${isSelected ? 'selected' : ''}`}
+                                            onClick={!isSelected ? () => addLaborFromCatalog(labor) : undefined}
+                                        >
+                                            <div className="equipment-table-name">{labor.labor_type}</div>
+                                            <div className="equipment-table-rate">{formatCurrency(parseFloat(labor.hourly_rate))}</div>
+                                            {isSelected ? (
+                                                <>
+                                                    <div className="equipment-table-input">
+                                                        <input
+                                                            type="number"
+                                                            value={selectedItem.qty || '0'}
+                                                            onChange={(e) => {
+                                                                e.stopPropagation();
+                                                                updateLineItem('A', selectedItem.id, 'qty', e.target.value);
+                                                            }}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            min="0"
+                                                            step="1"
+                                                        />
+                                                    </div>
+                                                    <div className="equipment-table-input">
+                                                        <input
+                                                            type="number"
+                                                            value={selectedItem.hoursPerDay || '0'}
+                                                            onChange={(e) => {
+                                                                e.stopPropagation();
+                                                                updateLineItem('A', selectedItem.id, 'hoursPerDay', e.target.value);
+                                                            }}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            min="0"
+                                                            step="0.25"
+                                                        />
+                                                    </div>
+                                                    <div className="equipment-table-input">
+                                                        <input
+                                                            type="number"
+                                                            value={selectedItem.days || '0'}
+                                                            onChange={(e) => {
+                                                                e.stopPropagation();
+                                                                updateLineItem('A', selectedItem.id, 'days', e.target.value);
+                                                            }}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            min="0"
+                                                            step="1"
+                                                        />
+                                                    </div>
+                                                    <div className="equipment-table-total">
+                                                        {formatCurrency(calculateLineTotal('A', selectedItem))}
+                                                    </div>
+                                                    <div className="equipment-table-action">
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                removeLineItem('A', selectedItem.id);
+                                                            }}
+                                                            className="remove-button-small"
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="equipment-table-empty">-</div>
+                                                    <div className="equipment-table-empty">-</div>
+                                                    <div className="equipment-table-empty">-</div>
+                                                    <div className="equipment-table-empty">-</div>
+                                                    <div className="equipment-table-empty">-</div>
+                                                </>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Schedule B - Consumables */}
+                    <div className="schedule-card">
+                        <div className="schedule-header">
+                            <div className="schedule-title">
+                                <span className="schedule-id">Schedule B</span>
+                                <h3>Consumables</h3>
+                            </div>
+                            <div className="schedule-total">
+                                {formatCurrency(calculateScheduleTotal('B'))}
+                            </div>
+                        </div>
+                        <div className="schedule-body">
+                            <div className="consumables-percentage-container">
+                                <div className="percentage-selector">
+                                    <label htmlFor="consumablesPercentage">Consumables Percentage of Labor Total:</label>
+                                    <select
+                                        id="consumablesPercentage"
+                                        value={consumablesPercentage}
+                                        onChange={(e) => setConsumablesPercentage(Number(e.target.value))}
+                                        className="percentage-select"
+                                    >
+                                        <option value={5}>5%</option>
+                                        <option value={10}>10%</option>
+                                        <option value={15}>15%</option>
+                                        <option value={20}>20%</option>
+                                    </select>
+                                </div>
+                                <div className="consumables-calculation">
+                                    <div className="calculation-row">
+                                        <span>Labor Total:</span>
+                                        <span className="calculation-value">{formatCurrency(calculateScheduleTotal('A'))}</span>
+                                    </div>
+                                    <div className="calculation-row">
+                                        <span>Percentage:</span>
+                                        <span className="calculation-value">{consumablesPercentage}%</span>
+                                    </div>
+                                    <div className="calculation-row total-row">
+                                        <span>Consumables Total:</span>
+                                        <span className="calculation-value">{formatCurrency(calculateScheduleTotal('B'))}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Schedule C - Equipment */}
+                    <div className="schedule-card">
+                        <div className="schedule-header">
+                            <div className="schedule-title">
+                                <span className="schedule-id">Schedule C</span>
+                                <h3>Equipment</h3>
+                            </div>
+                            <div className="schedule-total">
+                                {formatCurrency(calculateScheduleTotal('C'))}
+                            </div>
+                        </div>
+                        <div className="schedule-body">
+                            <div className="equipment-catalog-table">
+                                <div className="equipment-table-header">
+                                    <div>Equipment</div>
+                                    <div>Category</div>
+                                    <div>$/Day</div>
+                                    <div>Qty</div>
+                                    <div>Days</div>
+                                    <div>Total</div>
+                                    <div></div>
+                                </div>
+                                {mockEquipmentCatalog.map((equipment) => {
+                                    const selectedItem = schedules.C.find(item => item.equipmentId === equipment.id);
+                                    const isSelected = !!selectedItem;
+
+                                    return (
+                                        <div
+                                            key={equipment.id}
+                                            className={`equipment-table-row ${isSelected ? 'selected' : ''}`}
+                                            onClick={!isSelected ? () => addEquipmentFromCatalog(equipment) : undefined}
+                                        >
+                                            <div className="equipment-table-name">{equipment.equipment_name}</div>
+                                            <div className="equipment-table-category">{equipment.category || '-'}</div>
+                                            <div className="equipment-table-rate">{formatCurrency(parseFloat(equipment.daily_rate))}</div>
+                                            {isSelected ? (
+                                                <>
+                                                    <div className="equipment-table-input">
+                                                        <input
+                                                            type="number"
+                                                            value={selectedItem.value1}
+                                                            onChange={(e) => {
+                                                                e.stopPropagation();
+                                                                updateLineItem('C', selectedItem.id, 'value1', e.target.value);
+                                                            }}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            min="1"
+                                                            step="1"
+                                                        />
+                                                    </div>
+                                                    <div className="equipment-table-input">
+                                                        <input
+                                                            type="number"
+                                                            value={selectedItem.value2}
+                                                            onChange={(e) => {
+                                                                e.stopPropagation();
+                                                                updateLineItem('C', selectedItem.id, 'value2', e.target.value);
+                                                            }}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            min="1"
+                                                            step="1"
+                                                        />
+                                                    </div>
+                                                    <div className="equipment-table-total">
+                                                        {formatCurrency(calculateLineTotal('C', selectedItem))}
+                                                    </div>
+                                                    <div className="equipment-table-action">
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                removeLineItem('C', selectedItem.id);
+                                                            }}
+                                                            className="remove-button-small"
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="equipment-table-empty">-</div>
+                                                    <div className="equipment-table-empty">-</div>
+                                                    <div className="equipment-table-empty">-</div>
+                                                    <div className="equipment-table-action"></div>
+                                                </>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Schedule D - Subcontractors */}
+                    <div className="schedule-card">
+                        <div className="schedule-header">
+                            <div className="schedule-title">
+                                <span className="schedule-id">Schedule D</span>
+                                <h3>Subcontractors</h3>
+                            </div>
+                            <div className="schedule-total">
+                                {formatCurrency(calculateScheduleTotal('D'))}
+                            </div>
+                        </div>
+                        <div className="schedule-body">
+                            {schedules.D.length === 0 ? (
+                                <div className="no-items-message">
+                                    No line items added yet
+                                </div>
+                            ) : (
+                                <div className="line-items-list">
+                                    {schedules.D.map((item) => (
+                                        <div key={item.id} className="line-item">
+                                            <div className="line-item-row">
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Description"
+                                                        value={item.description}
+                                                        onChange={(e) => updateLineItem('D', item.id, 'description', e.target.value)}
+                                                        className="description-input"
+                                                    />
+                                                </div>
+                                                <div className="input-with-label">
+                                                    <label className="field-label">QTY</label>
+                                                    <input
+                                                        type="number"
+                                                        value={item.value1}
+                                                        onChange={(e) => updateLineItem('D', item.id, 'value1', e.target.value)}
+                                                        step="1"
+                                                    />
+                                                </div>
+                                                <div className="input-with-label">
+                                                    <label className="field-label">Daily Rate</label>
+                                                    <input
+                                                        type="number"
+                                                        value={item.value2}
+                                                        onChange={(e) => updateLineItem('D', item.id, 'value2', e.target.value)}
+                                                        step="0.01"
+                                                    />
+                                                </div>
+                                                <div className="input-with-label">
+                                                    <label className="field-label">Number of Days</label>
+                                                    <input
+                                                        type="number"
+                                                        value={item.value3}
+                                                        onChange={(e) => updateLineItem('D', item.id, 'value3', e.target.value)}
+                                                        step="1"
+                                                    />
+                                                </div>
+                                                <div className="line-total">
+                                                    {formatCurrency(calculateLineTotal('D', item))}
+                                                </div>
+                                                <button
+                                                    onClick={() => removeLineItem('D', item.id)}
+                                                    className="remove-button"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            <button
+                                onClick={() => addLineItem('D')}
+                                className="add-line-button"
+                            >
+                                + Add Line Item
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Schedule E - Miscellaneous */}
+                    <div className="schedule-card">
+                        <div className="schedule-header">
+                            <div className="schedule-title">
+                                <span className="schedule-id">Schedule E</span>
+                                <h3>Miscellaneous</h3>
+                            </div>
+                            <div className="schedule-total">
+                                {formatCurrency(calculateScheduleTotal('E'))}
+                            </div>
+                        </div>
+                        <div className="schedule-body">
+                            <div className="misc-items-container">
+                                {schedules.E.map((item) => {
+                                    const miscItem = miscellaneousItems.find(m => m.id === item.itemId);
+                                    if (!miscItem) return null;
+
+                                    return (
+                                        <div key={item.id} className="misc-item-card">
+                                            <div className="misc-item-header">
+                                                <span className="misc-item-name">{item.description}</span>
+                                                <span className="misc-item-total">{formatCurrency(calculateLineTotal('E', item))}</span>
+                                            </div>
+                                            <div className="misc-item-fields">
+                                                <div className="misc-field">
+                                                    <label>{miscItem.fields[0]}</label>
+                                                    <input
+                                                        type="number"
+                                                        value={item.value1}
+                                                        onChange={(e) => updateLineItem('E', item.id, 'value1', e.target.value)}
+                                                        min="0"
+                                                        step="0.01"
+                                                        placeholder="0"
+                                                    />
+                                                </div>
+                                                <div className="misc-field">
+                                                    <label>{miscItem.fields[1]}</label>
+                                                    <input
+                                                        type="number"
+                                                        value={item.value2}
+                                                        onChange={(e) => updateLineItem('E', item.id, 'value2', e.target.value)}
+                                                        min="0"
+                                                        step="0.01"
+                                                        placeholder="0"
+                                                    />
+                                                </div>
+                                                {miscItem.fields[2] && (
+                                                    <div className="misc-field">
+                                                        <label>{miscItem.fields[2]}</label>
+                                                        <input
+                                                            type="number"
+                                                            value={item.value3}
+                                                            onChange={(e) => updateLineItem('E', item.id, 'value3', e.target.value)}
+                                                            min="0"
+                                                            step="1"
+                                                            placeholder="0"
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Grand Total */}
+                    <div className="grand-total-display">
+                        <span className="total-label">Grand Total:</span>
+                        <span className="total-amount">{formatCurrency(calculateGrandTotal())}</span>
+                    </div>
+                </div>
+            );
+        }
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('app'));
+        root.render(<TMEstimate />);
+
+        // PDF Download Function (simplified - you can enhance this)
+        function downloadPDF() {
+            alert('PDF generation would work with jsPDF library. This is a simplified demo version.');
+        }
+    </script>
+</body>
+</html>
